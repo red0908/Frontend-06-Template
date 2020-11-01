@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicTacToe小游戏AI实现</title>
+  <style>
+    html,body {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #board {
+      position: relative;
+      width: 306px;
+    }
+    .cell{
+      width: 100px;
+      height: 100px;
+      background-color: rgb(32, 32, 32);
+      display: inline-block;
+      border: 1px solid#fff;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 100px;
+      font-size: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div id="board"></div>
+  <script>
+    // 1.棋盘数据结构：3x3的二维数组。状态有三种：空（0）、⭕️（1）、❌（2）
+    let pattern = [
+      [0,0,0],
+      [0,0,0],
+      [0,0,0]
+    ]
+    let color = 1
+    // 2.棋盘的绘制
+    function show () {
+      let board = document.getElementById('board')
+      board.innerHTML = ''
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          let cell = document.createElement('div')
+          cell.classList.add('cell')
+          cell.innerText = pattern[i][j] === 1 ? '⭕️' : pattern[i][j] === 2 ? '❌' : ''
+          cell.addEventListener('click', () => { move(j,i) })
+          board.appendChild(cell)
+        }
+      }
+    }
+    // 3.落子的事件监听
+    function move (x, y) {
+      pattern[y][x] = color
+      if (check(pattern, color)) {
+        alert(color === 2 ? '❌ is winner !' : '⭕️ is winner !')
+      }
+      show()
+      color = 3 - color
+      console.log(color === 1 ? '⭕️:' : '❌:',bestChoice(pattern, color))
+      if (willWin(pattern, color)) {
+        console.log(color === 2 ? '❌ will win !' : '⭕️ will win !')
+      }
+    }
+    // 4. 判断胜负的函数
+    function check (pattern, color) {
+      for (let i = 0; i < 3; i++) {
+        // 行扫描
+        let win = true
+        for (let j = 0; j < 3; j++) {
+          if (pattern[i][j] !== color) {
+            win = false
+            break
+          }
+        }
+        if (win)
+          return true
+      }
+      for (let i = 0; i < 3; i++) {
+        // 列扫描
+        let win = true
+        for (let j = 0; j < 3; j++) {
+          if (pattern[j][i] !== color) {
+            win = false
+            break
+          }
+        }
+        if (win)
+          return true
+      }
+      {
+        // 右上到左下斜扫描
+        let win = true
+        for (let j = 0; j < 3; j++) {
+          if (pattern[j][2-j] !== color) {
+            win = false
+          }
+        }
+        if (win)
+          return true
+      }
+      {
+        // 左上到右下斜扫描
+        let win = true
+        for (let j = 0; j < 3; j++) {
+          if (pattern[j][j] !== color) {
+            win = false
+          }
+        }
+        if (win)
+          return true
+      }
+      return false
+    }
+    // 5.AI判断
+    function clone (pattern) {
+      return JSON.parse(JSON.stringify(pattern))
+    }
+    function willWin (pattern, color) {
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          if (pattern[i][j])
+            continue
+          let tmp = clone(pattern)
+          tmp[i][j] = color
+          if (check(tmp, color)) {
+            return [j, i]
+          }
+        }
+      }
+      return null
+    }
+    // 6.最优落子
+    function bestChoice (pattern, color) {
+      let point = willWin(pattern, color)
+      if (point) {
+        return {
+          point: point,
+          result: 1
+        }
+      }
+      let result = -2
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          if (pattern[i][j])
+            continue
+          let tmp = clone(pattern)
+          tmp[i][j] = color
+          let r = bestChoice(tmp, 3 - color).result
+          // 对方的结果对于我们来说是相反的
+          if (-r >= result) {
+            result = -r
+            point = [j, i]
+          }
+        }
+      }
+      return {
+        point: point,
+        result: point ? result : 0
+      }
+    }
+    show()
+  </script>
+</body>
+</html>
