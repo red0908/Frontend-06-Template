@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>红绿灯问题setTimeOut</title>
+  <style>
+    html,body{
+      width: 100%;
+      height: 100%;
+    }
+    body{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    div {
+      width: 100px;
+      height: 100px;
+      border-radius: 50px;
+      margin-left: 30px;
+    }
+    .green_bright {
+      background-color: green;
+    }
+    .yellow_bright {
+      background-color: yellow;
+    }
+    .red_bright {
+      background-color: red;
+    }
+    .close {
+      background-color: slategray;
+    }
+  </style>
+</head>
+<body>
+  <div class="green_bright close"></div>
+  <div class="yellow_bright close"></div>
+  <div class="red_bright close"></div>
+  <script>
+    function greenBright () {
+      let close = document.body.children
+      for (let i = 0; i < close.length; i++) {
+        if (i === 0)
+          close[i].classList.remove('close')
+        else 
+          close[i].classList.add('close')
+      }
+    }
+    function yellowBright () {
+      let close = document.body.children
+      for (let i = 0; i < close.length; i++) {
+        if (i === 1)
+          close[i].classList.remove('close')
+        else 
+          close[i].classList.add('close')
+      }
+    }
+    function redBright () {
+      let close = document.body.children
+      for (let i = 0; i < close.length; i++) {
+        if (i === 2)
+          close[i].classList.remove('close')
+        else 
+          close[i].classList.add('close')
+      }
+    }
+    function autoControl () {
+      greenBright()
+      setTimeout(() => {
+        yellowBright()
+        setTimeout(() => {
+          redBright()
+          setTimeout(() => {
+            autoControl()
+          }, 5000);
+        }, 2000);
+      }, 10000);
+    }
+    autoControl()
+  </script>
+</body>
+</html>
