@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.2广度优先算法</title>
+  <style>
+    .cell {
+      width: 7px;
+      height: 7px;
+      display: inline-block;
+      background-color: gray;
+      border-bottom: 1px solid white;
+      border-right: 1px solid white;
+      vertical-align: middle;
+    }
+    #container{
+      width: 801px;
+      font-size: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <button onclick="localStorage.setItem('map', JSON.stringify(map))">保存</button>
+  <script>
+    let map = localStorage.getItem('map') ? JSON.parse(localStorage.getItem('map')) : Array(10000).fill(0)
+    let container = document.getElementById('container')
+    let mouseDown = false
+    let clear = false
+    for (let y = 0; y < 100; y++) {
+      for (let x = 0; x < 100; x++) {
+        let cell = document.createElement('div')
+        cell.classList.add('cell')
+        if (map[100 * y + x] === 1)
+          cell.style.backgroundColor = 'black'
+        cell.addEventListener('mousemove', e => {
+          if (mouseDown) {
+            if (clear) {
+              cell.style.backgroundColor = ''
+              map[100 * y + x] = 0
+            } else {
+              cell.style.backgroundColor = 'black'
+              map[100 * y + x] = 1
+            }
+          }
+        })
+        container.appendChild(cell)
+      }
+    }
+    document.addEventListener('mousedown', e => {
+      mouseDown = true
+      clear = (e.which === 3)
+    })
+    document.addEventListener('mouseup', e => mouseDown = false)
+    document.addEventListener('contextmenu', e => e.preventDefault())
+    function path (map, start, end) {
+      var queue = [start]
+      function insert (x, y) {
+        if (x < 0 || x >= 100 || y < 0 || y >= 100) {
+          return
+        }
+        if (map[y * 100 + x])
+          return
+        map[y * 100 + x] = 2
+        queue.push([x, y])
+      }
+      while (queue.length) {
+        let [x,y] = queue.shift()
+        if (x === end[0] && y === end[1]) {
+          return true
+        }
+        insert(x - 1, y)
+        insert(x, y - 1)
+        insert(x + 1, y)
+        insert(x, y + 1)
+      }
+      return false
+    }
+  </script>
+</body>
+</html>
