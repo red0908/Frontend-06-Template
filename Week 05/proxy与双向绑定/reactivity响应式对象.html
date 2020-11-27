@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>proxy与双向绑定 | reactivity响应式对象</title>
+  <style>
+    .color-picker {
+      display: flex;
+      width: 300px;
+      justify-content: center;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+    }
+    #color {
+      width: 100px;
+      height: 100px;
+      margin: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="color"></div>
+  <div class="color-picker">
+    <div><input type="range" max=255 min=0 id="r"> <span></span></div>
+    <div><input type="range" max=255 min=0 id="g"> <span></span></div>
+    <div><input type="range" max=255 min=0 id="b"> <span></span></div>
+  </div>
+  <script>
+    let callbacks = new Map()
+    let reactivties = new Map()
+  
+    let usedReactivtives = []
+  
+    let object = {
+      r: 1,
+      g: 1,
+      b: 1
+    }
+    let po = reactive(object)
+  
+    effect(() => {
+      document.getElementById('r').value = po.r
+      document.getElementById('r').nextElementSibling.innerText = `R: ${po.r}`
+    })
+    effect(() => {
+      document.getElementById('g').value = po.g
+      document.getElementById('g').nextElementSibling.innerText = `G: ${po.g}`
+    })    
+    effect(() => {
+      document.getElementById('b').value = po.b
+      document.getElementById('b').nextElementSibling.innerText = `B: ${po.b}`
+    })
+    document.getElementById('r').addEventListener('input', e => po.r = e.target.value)
+    document.getElementById('g').addEventListener('input', e => po.g = e.target.value)
+    document.getElementById('b').addEventListener('input', e => po.b = e.target.value)
+        
+    effect(() => {
+      document.getElementById('color').style.backgroundColor = `rgb(${po.r}, ${po.g}, ${po.b})`
+    })
+
+    function effect (callback) {
+      // callbacks.push(callback)
+      usedReactivtives = []
+      callback()
+      console.log(usedReactivtives)
+      for (const reactivity of usedReactivtives) {
+        if (!callbacks.has(reactivity[0])) {
+          callbacks.set(reactivity[0], new Map()) 
+        }
+        if (!callbacks.get(reactivity[0]).has(reactivity[1])) {
+          callbacks.get(reactivity[0]).set(reactivity[1], [])
+        }
+        callbacks.get(reactivity[0]).get(reactivity[1]).push(callback)
+      }
+    }
+  
+    function reactive (object) {
+      if (reactivties.has(object))
+        return reactivties.get(object)
+      let proxy = new Proxy(object, {
+        set (obj, prop, val) {
+          obj[prop] = val
+          if (callbacks.get(obj)) {
+            if (callbacks.get(obj).get(prop)) {
+              for (const callback of callbacks.get(obj).get(prop)) {
+                callback()
+              }
+            }
+          }
+          return obj[prop]
+        },
+        get (obj, prop) {
+          usedReactivtives.push([obj, prop])
+          if (typeof obj[prop] === 'object')
+            return reactive(obj[prop])
+          return obj[prop]
+        }
+      })
+      reactivties.set(object, proxy)
+      return proxy
+    }
+  </script>  
+</body>
+</html>
