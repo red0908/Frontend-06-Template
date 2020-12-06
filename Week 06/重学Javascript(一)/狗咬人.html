@@ -1,0 +1,19 @@
+<script>
+  class Gog {
+  beAngry (human) {
+    this.mood = 'angry'
+    human.hurt('dog bite')
+  }
+}
+
+class Human {
+  hurt (damage) {
+    this.feelHurt = damage
+    this.feelHappy = false
+  }
+  tease (thing) {
+    this.feelHappy = true
+    thing.beAngry(this)
+  }
+}
+</script>
