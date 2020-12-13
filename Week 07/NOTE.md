@@ -455,7 +455,7 @@ Javascript是在表达式的基础上，用语句完成控制流程。
 - 对后续的语句发生作用的语句，视为声明
 - 分类
 
-	- FunctionDelaration
+	- FunctionDeclaration
 	- GeneratorDeclaration
 	- AsyncFunctionDeclaration
 	- AsyncGeneratorDeclaration
@@ -463,7 +463,6 @@ Javascript是在表达式的基础上，用语句完成控制流程。
 
 		- 有声明的作用，又有实际执行计算的能力。在Javascript标准中，把它在语法上划归为了语句。
 		- ES标准笔记：
-
 			- var语句声明范围为运行中的执行上下文的VariableEnvironment的变量。 Var变量在实例化其包含的环境记录时创建，并在创建时初始化为undefined。在任何VariableEnvironment范围内，一个公共BindingIdentifier可能会出现在多个VariableDeclaration中，但这些声明仅共同定义一个变量。由VariableDeclaration与Initializer定义的变量在执行VariableDeclaration时（而不是在创建变量时）被分配其Initializer的AssignmentExpression的值。
 
 	- ClassDeclaration
