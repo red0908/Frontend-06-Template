@@ -1,0 +1,176 @@
+<script>
+  function stringToNumber (string) {
+  let number
+  number = NaN
+  // 十进制
+  if ((new RegExp(/([\+|-]?[1-9]+[0-9]*)+(.[0-9]{n})?|([\+|-]?)0(.[0-9]+)/)).test(string)) {
+    number = 0
+    let symbol = 1
+    if(string[0] === '+' || string[0] === '-') {
+      symbol = string[0] === '+' ? 1 : 0
+      string = string.substring(1, string.length)
+    }
+    let strArr = string.split('.')
+    for (let i = 0; i < strArr[0].length; i++) {
+      number +=( + strArr[0].charAt((strArr[0].length - 1) - i)) * 10 ** i
+    }
+    if (strArr.length === 2) {
+      for (let i = 0; i < strArr[1].length; i++) {
+        number +=( + strArr[1].charAt(i)) * 10** ( - (i + 1))
+      }
+    }
+    number = symbol ? number : (- number)
+  }
+  // 科学计数法
+  if ((new RegExp(/(([\+|-]?[1-9]+[0-9]*)+(.[0-9]{n})?|([\+|-]?)0(.[0-9]+))([Ee]{1}([\+|-]?\d+)$)/)).test(string)) {
+    number = 0
+    let strArr = string.split('e')
+    number = stringToNumber(strArr[0])
+    let symbol = 1
+    if(strArr[1][0] === '+' || strArr[1][0] === '-') {
+      symbol = strArr[1][0] === '+' ? 1 : 0
+      strArr[1] = strArr[1].substring(1, strArr[1].length)
+    }
+    number = number * (10 ** (+ strArr[1]))
+  }  
+  // 二进制
+  if ((new RegExp(/^(0[bB])[0-1]/)).test(string)) {
+    number = 0
+    for (let i = string.length - 1; i > 1; i--) {
+      number +=( + string[i]) * 2 ** ((string.length - 1) - i)
+    }
+  }
+  // 八进制
+  if ((new RegExp(/^(0[oO])[0-7]/)).test(string)) {
+    number = 0
+    for (let i = string.length - 1; i > 1; i--) {
+      number +=( + string[i]) * 8 ** ((string.length - 1) - i)
+    }
+  }
+  // 十六进制
+  if ((new RegExp(/^(0[xX])[0-9a-fA-F]/)).test(string)) {
+    number = 0
+    for (let i = string.length - 1; i > 1; i--) {
+      let char = string[i]
+      let index = ((string.length - 1) - i)
+      if ((new RegExp(/[a-fA-F]/).test(char))) {
+        let baseCode = 'a'.charCodeAt(0)
+        let code = string.charCodeAt(i)
+        let cha = (10 + (baseCode - code))
+        number += cha * 16 ** index
+      } else {
+        number +=( + char) * 16 ** index
+      }
+    }
+  }
+  return number
+}
+console.log('-------------stringToNumber')
+console.log(stringToNumber('dsafsd'))
+console.log(stringToNumber('0.5'))
+console.log(stringToNumber('0.5e3'))
+console.log(stringToNumber('1e23'))
+console.log(stringToNumber('1.32e10'))
+console.log(stringToNumber('+1'))
+console.log(stringToNumber('-1'))
+console.log(stringToNumber('1.25345'))
+console.log(stringToNumber('0b1011'))
+console.log(stringToNumber('0o532'))
+console.log(stringToNumber('0xa9'))
+
+function numberToString (digital, base) {
+  let string = ''
+  let number = parseInt(digital)
+  let decimal = digital - number
+  if (base === '10') {
+    string = digital + string
+  }
+
+  if (base === '2') {
+    // 整数部分
+    let yu = []
+    while(number > 1){
+      yu.unshift(number % 2) 
+      number = parseInt(number / 2)
+    }
+    yu.unshift(number)
+    string = yu.join('')
+    // 小数部分
+    if (decimal > 0) {
+      let zheng = []
+      let cheng = 0
+      do {
+        cheng = decimal * 2
+        zheng.push(parseInt(cheng))
+        decimal = cheng - parseInt(cheng)
+      } while (parseInt(decimal) === 0 && zheng.length <= 10)
+      string += '.'
+      string += zheng.join('')
+    }
+  }
+  if (base === '8') {
+    // 整数部分
+    let yu = []
+    while(number > 7){
+      yu.unshift(number % 8) 
+      number = parseInt(number / 8)
+    }
+    yu.unshift(number)
+    string = yu.join('')
+    // 小数部分
+    if (decimal > 0) {
+      let zheng = []
+      let cheng = 0
+      do {
+        cheng = decimal * 8
+        zheng.push(parseInt(cheng))
+        decimal = cheng - parseInt(cheng)
+      } while (parseInt(decimal) === 0 && zheng.length <= 10)
+      string += '.'
+      string += zheng.join('')
+    }
+  }
+  if (base === '16') {
+    // 整数部分
+    let yu = []
+    let str = 'ABCDEF'
+    while(number > 15){
+      if (number % 16 > 9) {
+        yu.unshift(str[(number % 16) - 10])
+      } else {
+        yu.unshift(number % 16)
+      }
+      number = parseInt(number / 16)
+    }
+    yu.unshift(number)
+    string = yu.join('')
+    // 小数部分
+    if (decimal > 0) {
+      let zheng = []
+      let cheng = 0
+      do {
+        cheng = decimal * 16
+        if (cheng > 9) {
+          zheng.push(str[cheng - 10])
+        } else {
+          zheng.push(parseInt(cheng))
+        }
+        decimal = cheng - parseInt(cheng)
+      } while (parseInt(decimal) === 0 && zheng.length <= 10)
+      string += '.'
+      string += zheng.join('')
+    }
+  }
+  return string
+}
+console.log('-------------numberToString整数')
+console.log(numberToString (34, '10'))
+console.log(numberToString (34, '8'))
+console.log(numberToString (34, '16'))
+console.log(numberToString (42, '16'))
+console.log('-------------numberToString小数')
+console.log(numberToString (0.7, '10'))
+console.log(numberToString (0.7, '2'))
+console.log(numberToString (0.7, '8'))
+console.log(numberToString (0.7, '16'))
+</script>
