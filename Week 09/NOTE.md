@@ -1017,7 +1017,7 @@ module.exports.parseHTML = function parseHTML (html) {
 
 ### 最终执行结果
 
-![DOM树](/Users/zhangruntong/Documents/【最嘉】学习/【极客】训练营/github/Frontend-06-Template/Week 09/img/dom树1.jpg)
+![DOM树](./img/dom树1.jpg)
 
 ## Toy - Broswer——CSS计算
 
@@ -1031,7 +1031,7 @@ module.exports.parseHTML = function parseHTML (html) {
 * 调用CSS parser 来分析CSS规则
 * 这里我们必须要仔细研究此库分析的CSS规则格式
 
-![ast](/Users/zhangruntong/Documents/【最嘉】学习/【极客】训练营/github/Frontend-06-Template/Week 09/img/ast.jpg)
+![ast](./img/ast.jpg)
 
 ast里的stylesheet中的rules就是我们要收集的规则。rules是一个数组，每一项的对象中：
 
@@ -1483,9 +1483,9 @@ function matchSelector (element, selector) {
 
 #### 实现效果
 
-![计算1](/Users/zhangruntong/Documents/【最嘉】学习/【极客】训练营/github/Frontend-06-Template/Week 09/img/计算specificity1.jpg)
+![计算1](./img/计算specificity1.jpg)
 
-![计算2](/Users/zhangruntong/Documents/【最嘉】学习/【极客】训练营/github/Frontend-06-Template/Week 09/img/计算specificity2.jpg)
+![计算2](./img/计算specificity2.jpg)
 
 
 
