@@ -45,8 +45,8 @@ function layout (element) {
   if (!style.alignContent || style.alignContent === 'auto') {
     style.alignContent = 'stretch'
   }
-  var mainSize, mainStart, mainEnd, mainSign, mainBase,
-  crossSize, crossStart, crossEnd, crossSign, crossBase
+  var mainSize/*主轴尺寸*/, mainStart/*主轴开始源*/, mainEnd/*主轴结束源*/, mainSign/*主轴计算符号*/, mainBase/*主轴计算基本大小*/,
+  crossSize/*交叉轴尺寸*/, crossStart/*交叉轴开始源*/, crossEnd/*交叉轴结束源*/, crossSign/*交叉轴计算符号*/, crossBase/*交叉轴计算基本大小*/
   if (style.flexDirection === 'row') {
     mainSize = 'width'
     mainStart = 'left'
@@ -251,7 +251,7 @@ function layout (element) {
   } else {
     crossBase = 0
   }
-  var lineSize = style[crossSize] / flexLines.length
+  // var lineSize = style[crossSize] / flexLines.length
   var step
   if (style.alignContent === 'flex-start') {
     crossBase += 0
