@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    [val=d].text{
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="a" id="div-a">
+    <div class="b" id="div-b" b="val-i">
+      <span class="text" id="span-text" val="d">dd</span>
+    </div>
+  </div>
+  <script>
+    function match (selectors, element) {
+      let selectorArr = selectors.split(/[\s]/).reverse()
+      var lastIndex = 0
+      var reg = new RegExp(/(\[([a-zA-Z][\S]*)([~*^$\|]?=[\S]*)?\])|(.[a-z][a-z\d\-_]*)|(#[a-z][a-z\d\-_]*)/gi)
+      var el = element
+      for (let i = 0; i < selectorArr.length; i++) {
+        if (!el) return false
+        var arr = selectorArr[i].match(reg)
+        for (const s of arr) {
+          if (s.charAt(0) === '.') {
+            if (!el.getAttribute('class').includes(s.replace('.', '')))
+              return false
+          } else if (s.charAt(0) === '#') {
+            if (el.getAttribute('id') !== s.replace('#', ''))
+              return false
+          }  else if (s.match(/\[([a-zA-Z][\S]*)([~*^$\|]?=[\S]*)?\]/)) {
+            let str = s.replace(/[\[\]]/g, '')
+            if (str.includes('=')) {
+              let attr = str.split('=')
+              if (!attr[0].match(/[~*^$\|]/)) {
+                if (el.getAttribute(attr[0]) !== attr[1])
+                  return false  
+              } else {
+                // var re = new RegExp("\\w+");
+                if (attr[0].includes('^')) {
+                  // 1.E[att^="val"] { sRules }
+                  let re = new RegExp('^'+attr[1])
+                  if (re.test(el.getAttribute(attr[0].replace('^', ''))))
+                    return false
+                } else if (attr[0].includes('~')) {
+                  // 2.E[att~="val"] { sRules }
+                  let attrArr = el.getAttribute(attr[0].replace('~', '')).split(' ')
+                  if (attrArr.indexOf(attr[1]) === -1)
+                    return false
+                } else if (attr[0].includes('$')) {
+                  // 3.E[att$="val"] { sRules }
+                  let re = new RegExp(attr[1]+'$')
+                  if (!re.test(el.getAttribute(attr[0].replace('$', ''))))
+                    return false
+                } else if (attr[0].includes('*')) {
+                  // 4.E[att*="val"] { sRules }
+                  let re = new RegExp(attr[1])
+                  if (!re.test(el.getAttribute(attr[0].replace('*', ''))))
+                    return false
+                } else if (attr[0].includes('|')) {
+                  // 4.E[att*="val"] { sRules }
+                  let re = new RegExp('^'+(attr[0]+'-'))
+                  if ((!re.test(el.getAttribute(attr[0].replace('|', '')))) && attr[1] !== el.getAttribute(attr[0].replace('|', '')))
+                    return false
+                }
+              }
+            }
+          } else {
+            if (el.tagName.toLowerCase() !== s)
+              return false
+          }
+        }
+        el = el.parentNode
+      }
+      return true
+    }
+    console.log(match("div.a#div-a [b|=val].b span.text#span-text", document.getElementById("span-text")))
+  </script>
+</body>
+</html>
