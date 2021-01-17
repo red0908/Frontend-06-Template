@@ -1,0 +1,26 @@
+<style>
+  .button{
+    display: inline-block;
+    outline: none;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font: 14px/100% Arial, Helvetica, sans-serif;
+    padding: .5em 2em .55em;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    border-radius: .5em;
+    color: white;
+    border: 1px solid;
+  }
+</style>
+<div class="organe button">123</div>
+<script>
+  var btn = document.querySelector(".button")
+  var h = 25
+  setInterval(function () {
+    h ++
+    h = h % 360
+    btn.style.borderColor = `hsl(${h}, 95%, 45%)`
+    btn.style.background = `linear-gradient(to bottom, hsl(${h}, 95%, 54.1%), hsl(${h}, 95%, 84.1%))`
+  }, 100)
+</script>
