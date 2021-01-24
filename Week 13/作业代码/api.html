@@ -1,0 +1,209 @@
+<script>
+  /**
+   * Browser API的整理分类
+   * */ 
+
+  let names = Object.getOwnPropertyNames(window)
+  function filterOut (names, props) {
+    let set = new Set()
+    props.forEach(o => set.add(o))
+    return names.filter(e => !set.has(e))
+  }
+// SubClass of Node
+  names = names.filter(e => {
+    try {
+      return !(window[e].prototype instanceof Node)
+    } catch (error) {
+      return true
+    }
+  })
+// ECMA 262
+{
+  let js = new Set()
+  let objects = ['globalThis', 'Infinity', 'NaN', 'undefined','eval', 'isFinite','isNaN', 'parseFloat','parseInt', 'Encode', 'Decode','decodeURI', 'decodeURIComponent', 'encodeURI', 'encodeURIComponent', 'Array', 'ArrayBuffer', 'BigInt', 'BigInt64Array', 'BigUint64Array', 'Boolean', 'DataView', 'Date', 'Error', 'EvalError', 'Float32Array',
+'Float64Array', 'Function','Int8Array','Int8Array','Int16Array','Int32Array','Map','Number','Object','Promise','Proxy',
+'RangeError','ReferenceError','RegExp','Set','SharedArrayBuffer','String','Symbol','SyntaxError',
+'TypeError','Uint8Array','Uint8ClampedArray','Uint16Array','Uint32Array','URIError','WeakMap','WeakSet','Atomics','JSON','Math','Reflect']
+  objects.forEach(o => js.add(o))
+  names = names.filter(e => !(js.has(e)))
+}
+// events
+names = names.filter(e => !e.match(/^on/))
+// webkit private
+names = names.filter(e => !e.match(/^[webkit|WebKit]/))
+// CSS
+names = names.filter(e => !e.match(/^CSS/))
+
+/**
+ * https://html.spec.whatwg.org/#window
+ * 7.3The Window object
+*/
+{
+  let windowProps = new Set()
+  let objects = ['window', 'self', 'document', 'name', 'location', 'customElements',
+   'locationbar', 'menubar',  'personalbar', 'scrollbars',  'statusbar', 'toolbar',  'status', 'closed',  
+   'frames', 'length',  'top', 'opener', 'parent', 'frameElement', 'Navigator', 'navigator',
+   'originAgentCluster', 'external', 'alert', 'confirm', 'prompt', 'print', 'close', 'stop', 'focus', 'blur',
+   "origin","screen","scrollX","pageXOffset","scrollY","pageYOffset",
+   "visualViewport","screenX","screenY","outerWidth","outerHeight",
+   "devicePixelRatio","clientInformation","offscreenBuffering",
+   "screenLeft","screenTop","defaultStatus","defaultstatus","styleMedia","crypto","atob",
+   "cancelAnimationFrame","cancelIdleCallback","captureEvents",
+   "clearInterval","clearTimeout","createImageBitmap","fetch",
+   "find","getComputedStyle","getSelection","matchMedia",
+   "moveBy","moveTo","open","postMessage","queueMicrotask",
+   "releaseEvents","requestAnimationFrame",
+   "requestIdleCallback","resizeBy","resizeTo",
+   "scroll","scrollBy","scrollTo","setInterval","setTimeout","AggregateError",
+   "FinalizationRegistry","chrome","caches","cookieStore", 'CookieStore']
+   objects.forEach(o => windowProps.add(o))
+   names = names.filter(e => !(windowProps.has(e)))
+}
+/**
+ * https://html.spec.whatwg.org
+ * 
+*/
+{
+  let interfaces = new Set()
+  let objects = ['ApplicationCache', 'AudioTrack', 'AudioTrackList', 'BarProp', 'BroadcastChannel', 'CanvasGradient',
+  , 'console', 'WebSocket', 'FormDataEvent', 'SubmitEvent',
+  'TextTrackList', 'TextTrack', 'TextTrackCueList', 'TextTrackCue', 'TimeRanges', 'TrackEvent',
+  'RadioNodeList', "HTMLOptionsCollection","HTMLFormControlsCollection","HTMLCollection","HTMLAllCollection",
+  "DOMMatrix","DOMImplementation","DOMException","DOMError", 'ImageBitmapRenderingContext',
+  'OffscreenCanvas', 'OffscreenCanvasRenderingContext2D', 'CustomElementRegistry', 'ElementInternals',
+  "DataTransferItemList","DataTransferItem","DataTransfer", 'DragEvent', 'History', 'Location', 'PopStateEvent',
+  'HashChangeEvent', 'PageTransitionEvent', 'BeforeUnloadEvent', 'MessageEvent', 
+  'EventSource', 'WebSocket', 'CloseEvent', "StorageEvent","Storage", "sessionStorage","localStorage", "StorageManager"
+  ,'history', 'CanvasRenderingContext2D', 'CanvasPattern','Event', "ErrorEvent"]
+   objects.forEach(o => interfaces.add(o))
+   names = names.filter(e => !(interfaces.has(e)))
+}
+/**
+ * https://wicg.github.io/background-sync/spec/#sync-manager-interface
+*/
+names = filterOut(names, ["WebGLVertexArrayObject","WebGLUniformLocation","WebGLTransformFeedback","WebGLTexture","WebGLSync","WebGLShaderPrecisionFormat","WebGLShader","WebGLRenderingContext","WebGLRenderbuffer","WebGLProgram","WebGLFramebuffer","WebGLContextEvent","WebGLBuffer","WebGLActiveInfo","WebGL2RenderingContext"])
+/**
+ * https://www.w3.org/TR/webaudio/#audioapi
+*/
+names = filterOut(names, ['BaseAudioContext', 'AudioContext', 'OfflineAudioContext', 'AudioBuffer',
+'AudioNode', 'AudioParam', 'AudioScheduledSourceNode', 'AnalyserNode', 'AudioBufferSourceNode', 'AudioDestinationNode',
+'AudioListener', 'BiquadFilterNode', 'ChannelMergerNode', 'ChannelSplitterNode', 'ConstantSourceNode',
+'ConvolverNode', 'DelayNode', 'DynamicsCompressorNode', 'GainNode', 'IIRFilterNode', 'MediaElementAudioSourceNode',
+'MediaStreamAudioDestinationNode', 'MediaStreamAudioSourceNode', 'MediaStreamTrackAudioSourceNode',
+'OscillatorNode', 'PannerNode', 'PeriodicWave', 'ScriptProcessorNode', 'StereoPannerNode',
+'WaveShaperNode', 'AudioWorklet', 'AudioWorkletNode'])
+/**
+ * https://encoding.spec.whatwg.org/#interface-textencoder
+*/
+names = filterOut(names, ['TextEncoder', 'TextDecoder', 'TextDecoderStream', 'TextEncoderStream'])
+/**
+ * https://streams.spec.whatwg.org
+*/
+names = filterOut(names, ['ReadableStream', 'ReadableStreamDefaultReader', 'ReadableStreamDefaultController', 
+'ReadableStreamBYOBReader', 'ReadableByteStreamController', 'ReadableStreamBYOBRequest', 'ByteLengthQueuingStrategy',
+'TransformStream', 'CountQueuingStrategy', 'WritableStream', 'WritableStreamDefaultWriter', 'WritableStreamDefaultController', 
+''])
+/**
+ * https://wicg.github.io/background-sync/spec/#sync-manager-interface
+*/
+names = filterOut(names, ['SyncManager'])
+/**
+ * https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html
+*/
+names = filterOut(names, ['XPathException', 'XPathExceptionCode', 'XPathEvaluator', 'XPathExpression', 'XPathNSResolver', 'XPathResult', 'XPathNamespace'])
+/**
+ * https://w3c.github.io/DOM-Parsing/#the-xmlserializer-interface
+ * */
+ names = filterOut(names, ['DOMParser', 'XMLSerializer'])
+/**
+ * https://xhr.spec.whatwg.org/
+ * */
+ names = filterOut(names, ['XMLHttpRequest', "XMLHttpRequestUpload","XMLHttpRequestEventTarget","XMLHttpRequest",
+  'FormData', 'ProgressEvent'])
+/**
+ * https://url.spec.whatwg.org/
+ * */
+ names = filterOut(names, ['URL', "URLSearchParams"]) 
+ /**
+ * https://w3c.github.io/longtasks/#sec-TaskAttributionTiming
+ * */
+ names = filterOut(names, ['PerformanceLongTaskTiming', "TaskAttributionTiming"]) 
+ /**
+ * https://drafts.csswg.org/css-transitions/#interface-transitionevent
+ * */
+ names = filterOut(names, ['TransitionEvent', "TaskAttributionTiming"]) 
+ /**
+ * https://w3c.github.io/touch-events/#touchlist-interface
+ * */
+ names = filterOut(names, ['Touch', "TouchList", 'TouchEvent'])
+/**
+ * https://svgwg.org/svg2-draft/types.html#InterfaceSVGUnitTypes
+ * */
+ names = filterOut(names, ["SVGUnitTypes","SVGTransformList","SVGTransform","SVGStringList","SVGRect","SVGPreserveAspectRatio","SVGPointList","SVGPoint","SVGNumberList","SVGNumber","SVGMatrix","SVGLengthList","SVGLength","SVGAnimatedTransformList","SVGAnimatedString","SVGAnimatedRect","SVGAnimatedPreserveAspectRatio","SVGAnimatedNumberList","SVGAnimatedNumber","SVGAnimatedLengthList","SVGAnimatedLength","SVGAnimatedInteger","SVGAnimatedEnumeration","SVGAnimatedBoolean","SVGAnimatedAngle","SVGAngle"]) 
+/**
+ * https://w3c.github.io/webrtc-pc/#dom-rtctrackevent
+ * */
+ names = filterOut(names, ['RTCIceTransport', "RTCTrackEvent","RTCStatsReport","RTCSessionDescription","RTCSctpTransport","RTCRtpTransceiver","RTCRtpSender","RTCRtpReceiver","RTCPeerConnectionIceEvent","RTCPeerConnectionIceErrorEvent","RTCPeerConnection","RTCIceCandidate","RTCErrorEvent","RTCError","RTCEncodedVideoFrame","RTCEncodedAudioFrame","RTCDtlsTransport","RTCDataChannelEvent","RTCDataChannel","RTCDTMFToneChangeEvent","RTCDTMFSender","RTCCertificate"]) /*************/
+ /**
+ * https://www.w3.org/TR/navigation-timing/#sec-navigation-timing-interface
+ * */
+ names = filterOut(names, ['PerformanceTiming', "PerformanceNavigation"])
+ /**
+ * Performance API
+ * */
+ names = filterOut(names, ['performance', "PerformanceServerTiming","PerformanceResourceTiming","PerformancePaintTiming","PerformanceObserverEntryList","PerformanceObserver","PerformanceNavigationTiming","PerformanceNavigation","PerformanceMeasure","PerformanceMark","PerformanceEventTiming","PerformanceEntry","PerformanceElementTiming","Performance"]) 
+ /**
+ * https://dom.spec.whatwg.org/
+ * */
+ names = filterOut(names, ['CustomEvent', "EventTarget",
+ 'AbortController', 'NodeList', 'HTMLCollection', 'DOMImplementation', "DOMTokenList","DOMStringMap","DOMStringList","DOMRectReadOnly","DOMRectList","DOMRect","DOMQuad","DOMPointReadOnly","DOMPoint","DOMMatrixReadOnly"])
+  /**
+ * https://w3c.github.io/IndexedDB/#request-api
+ * */
+ names = filterOut(names, ["IDBVersionChangeEvent","IDBTransaction","IDBRequest","IDBOpenDBRequest","IDBObjectStore","IDBKeyRange","IDBIndex","IDBFactory","IDBDatabase","IDBCursorWithValue","IDBCursor"])
+/**
+ * https://fetch.spec.whatwg.org/
+ * */
+ names = filterOut(names, ['Headers', 'Request', 'Response'])
+ 
+ /**
+ * https://w3c.github.io/mediacapture-main/#dom-mediadeviceinfo
+ * */
+ names = filterOut(names, ["MediaStreamTrack","MediaStreamEvent","MediaStream","MediaRecorder","MediaQueryListEvent","MediaQueryList","MediaList","MediaError","MediaEncryptedEvent","MediaCapabilities"
+ ,"MediaDeviceInfo","MediaDevices","MediaKeyMessageEvent","MediaKeySession","MediaKeyStatusMap","MediaKeySystemAccess","MediaKeys"
+,'MediaStreamTrackEvent'])
+ 
+ /**
+ * https://developer.mozilla.org/zh-CN/docs/Web/API/MediaSession
+ * */
+ names = filterOut(names, ["MediaMetadata","MediaSession"])
+   /**
+ * https://w3c.github.io/media-source/#mediasource
+ * */
+ names = filterOut(names, ['MediaSource'])
+ /**
+ * https://w3c.github.io/mediacapture-fromelement/#the-canvascapturemediastreamtrack
+ * */
+ names = filterOut(names, ["CanvasCaptureMediaStreamTrack"])
+   
+ /**
+ * https://wicg.github.io/webusb/#enumeration
+ * */
+ names = filterOut(names, ["USB","USBAlternateInterface","USBConfiguration","USBConnectionEvent","USBDevice","USBEndpoint","USBInTransferResult","USBInterface","USBIsochronousInTransferPacket","USBIsochronousInTransferResult","USBIsochronousOutTransferPacket","USBIsochronousOutTransferResult","USBOutTransferResult"])
+/**
+ * https://wicg.github.io/file-system-access/#api-filesystemdirectoryhandle
+ * */
+ names = filterOut(names, ["FileSystemDirectoryHandle","FileSystemFileHandle","FileSystemHandle","FileSystemWritableFileStream"])
+/**
+ * https://w3c.github.io/FileAPI/
+ * */
+ names = filterOut(names, ["FileReader","FileList","File"])
+/**
+ * https://drafts.csswg.org/web-animations/#the-animationtimeline-interface
+ * */
+ names = filterOut(names, ["AnimationEvent","AnimationEffect","Animation",
+"AnimationPlaybackEvent","AnimationTimeline"]) 
+ /*********/
+ console.log(JSON.stringify(names))
+ console.log(names)
+</script>
