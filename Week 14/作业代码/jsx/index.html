@@ -1,0 +1,25 @@
+<style>
+  body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .carousel {
+    width: 500px;
+    height: 280px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .carousel>div{
+    width: 500px;
+    /* 500 / 1142 * 640 = 280 */
+    height: 280px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    transition: ease 0.5s;
+  }
+</style>
+<body>
+  <script src="./main.js"></script>
+</body>
