@@ -151,5 +151,343 @@ Chirldren是构建组件树中最重要的组件特性。Chirldren的分为两�
 * Content 型: 有几个Chirldren最终就显示几个。这种情况下的组件树是比较简单的。
 * Template 型：Chirldren代表的是模板的作用。例如：list组件的渲染。
 
+## 3. 实例：轮播组件
+
+### 3.1 JSX环境构建
+
+轮播组件的构建，我们要构建一个JSX的环境。步骤如下：
+
+1. npm -init
+2. 安装 webpack、webpack-cli
+3. 安装@babel/core、@babel/preset-env、babel-loader、@babel/plugin-transform-react-jsx
+
+如下配置webpack.config.js
+
+```js
+module.exports = {
+  entry: './main.js',
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: [
+              ['@babel/plugin-transform-react-jsx', {
+                pragma: 'createElement'
+              }]
+            ]
+          }
+        }
+      }
+    ]
+  },
+  mode: 'development'
+}
+```
+
+我们修改插件```@babel/plugin-transform-react-jsx```的第二个参数为createElement，插件会去文件中找createElement这个函数，并会将js代码中的标签文法给解析为参数传入该函数,由此可见createElement的函数应该具有以下功能：
+
+* 创建HTML普通标签，为其添加属性和后代节点
+* 创建HTML文本节点
+* 创建自定义模板类，为其添加属性和后代节点
+
+整理后代码如下：
+
+```js
+export function createElement (type, attribute, ...children) {
+  let el
+  if (typeof type === 'string')
+    el = new ElementWrapper(type)
+  else
+    el = new type
+  for (const attr in attribute) {
+    el.setAttribute(attr, attribute[attr])
+  }
+  for (const child of children) {
+    if (typeof child === 'string') {
+      child = new TextWrapper(child)
+    }
+    el.appendChild(child)
+  }
+  return el
+}
+export class Component {
+  constructor () {
+  }
+  setAttribute (name, val) {
+    this.root.setAttribute(name, val)
+  }
+  appendChild (child) {
+    child.mountTo(this.root)
+  }
+  mountTo (parent) {
+    parent.appendChild(this.root)
+  }
+}
+class TextWrapper extends Component{
+  constructor (text) {
+    super()
+    this.root = document.createTextNode(text)
+  }
+}
+class ElementWrapper extends Component {
+  constructor (type) {
+    super()
+    this.root = document.createElement(type)
+  }
+}
+
+```
+
+### 3.3 轮播插件
+
+这里我们构建一个继承Component的Carousel的类。
+
+```js
+// main.js
+let carImgs = [...]
+let a = <Carousel src={carImgs}/>
+a.mountTo(document.body)
+
+class Carousel extends Component {
+  constructor () {
+    super()
+    this.attribute = Object.create(null)
+  }
+  render () {
+    this.root = document.createElement('div')
+    this.root.classList.add('carousel')
+    for (const src of this.attribute.src) {
+      let img = document.createElement('div')
+      img.style.backgroundImage = `url(${src})`
+      this.root.appendChild(img)
+    }
+    return this.root
+  }
+  setAttribute (name, val) {
+    this.attribute[name] = val
+  }
+  mountTo (parent) {
+    parent.appendChild(this.render())
+  }
+}
+```
+
+ps: HTML中样式如下：
+
+```css
+	.carousel {
+    width: 500px;
+    height: 280px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .carousel>div{
+    width: 500px;
+    /* 500 / 1142 * 640 = 280 */
+    height: 280px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    transition: ease 0.5s;
+  }
+```
+
+### 3.3 轮播插件——自动轮播功能
+
+要实现自动轮播我们首先可以先为每一张图片添加一个，transform的横向变换。
+
+```js
+  render () {
+    this.root = document.createElement('div')
+    this.root.classList.add('carousel')
+    for (const src of this.attribute.src) {
+      let img = document.createElement('div')
+      img.style.backgroundImage = `url(${src})`
+      this.root.appendChild(img)
+    }
+    let current = 0
+    setInterval(() => {
+      let children = this.root.children
+      ++current
+      current = current % children.length
+      for (const child of children) {
+        child.style.transform = `translateX(-${current * 100}%)`
+      }
+    }, 3000)
+    return this.root
+  }
+```
+
+但上述效果实现功能不完善，无法实现循环播放。于是我们做了以下改进：
+
+```js
+  render () {
+    this.root = document.createElement('div')
+    this.root.classList.add('carousel')
+    for (const src of this.attribute.src) {
+      let img = document.createElement('div')
+      img.style.backgroundImage = `url(${src})`
+      this.root.appendChild(img)
+    }
+    let currentIndex = 0
+    setInterval(() => {
+      let children = this.root.children
+      let nextIndex = (currentIndex + 1) % children.length
+      let current = children[currentIndex]
+      let next = children[nextIndex]
+
+      // 是当前显示的下一张图片移动到当前位置下一个位置（即比当前图片横向多偏移1个100%x长度的位置）
+      next.style.transition = 'none'
+      next.style.transform = `translateX(${ - nextIndex * 100 + 100 }%)`
+      // 下一帧时执行移动，即滚动变换的过程（16毫秒为浏览器的一帧）
+      setTimeout(() => {
+        next.style.transition = ''
+        // 当前图片向左移动比当前偏移多1个图片100%x长度的偏移量
+        current.style.transform = `translateX(${ - 100 - currentIndex * 100}%)`
+        // 下一张图片偏移到当前图片位置
+        next.style.transform = `translateX(${ - nextIndex * 100}%)`
+        // 当前索引为下一张索引
+        currentIndex = nextIndex
+      }, 16)
+    }, 3000)
+    return this.root
+  }
+```
+
+### 3.4 轮播插件——手动轮播功能
+
+实现手动播放要在三个鼠标事件中进行, 事件架构如下：
+
+```js
+render () {
+   // ...部分代码省略
+  
+  this.root.addEventLisener('mousedown',(e) => {
+    let startX = e.clientX, startY = e.clientY
+    let move = e => {
+      let x = e.clientX - startX
+      let y = e.clientY - startY
+    }
+    let up = e => {
+      let x = e.clientX - startX
+      let y = e.clientY - startY
+      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseup', up)
+    }
+    document.addEventListener('mousemove', move)
+    document.addEventListener('mouseup', up)
+  })
+  
+  return this.root
+}
+```
+
+这里参考第一种自动播放的方式，在move和up中给每一张图片添加，transform的横向变换。
+
+```js
+// 部分代码省略
+		/**鼠标操作手动轮播*/
+    let position = 0// 记录当前滚动的索引
+    this.root.addEventListener('mousedown', (e) => {
+      // console.log('mousedown')
+      let children = this.root.children
+      let startX = e.clientX
+      let move = e => {
+        let x = e.clientX - startX
+        for (const child of children) {
+          child.style.transition = 'none'
+          child.style.transform = `translateX(${ - position * 500 + x}px)`
+        }
+        // console.log('mousemove')
+      }
+      let up = e => {
+        let x = e.clientX - startX
+        position = position - Math.round(x / 500) // 移动量大于250为则变换下一张/上一张
+        for (const child of children) {
+          child.style.transition = ''
+          child.style.transform = `translateX(${ - position * 500 }px)`
+        }
+        document.removeEventListener('mousemove', move)
+        document.removeEventListener('mouseup', up)
+      }
+      document.addEventListener('mousemove',move)
+      document.addEventListener('mouseup', up)
+    })
+```
+
+上述代码同样也有无法循环的问题。改进如下：
+
+```js
+
+    /**鼠标操作手动轮播*/
+    let position = 0
+    this.root.addEventListener('mousedown', (e) => {
+      // console.log('mousedown')
+      let children = this.root.children
+      let startX = e.clientX
+      let move = e => {
+        let x = e.clientX - startX
+        let current = position - ((x - x % 500) / 500) // 整数效果，保留x符号，且绝对值较小的一边
+        // move的过程中将 当前图片和它的左右两张移动到正确的位置
+        for (const offset of [-1, 0, 1]) {
+          let pos = current + offset
+          // 图片索引，保证为正数，如：-1 % 4= -1，（-1 + 4）% 4 = 3
+          pos = (pos + children.length) % children.length // 图片索引
+          children[pos].style.transition = 'none'
+          // - pos * 500 + offset * 500 + x % 500 ：自己的位置长度 + 偏移位置长度 + 不够图片长度的距离
+          children[pos].style.transform = `translateX(${ - pos * 500 + offset * 500 + x % 500 }px)`
+        }
+        // console.log('mousemove')
+      }
+      let up = e => {
+        let x = e.clientX - startX
+        position = position - Math.round(x / 500)
+        // up的时候，则根据最终移动的x长度，计算移动图片（当前显示、下一张显示图片）即将移动的偏移度（左/右）
+        for (const offset of [0, -Math.sign(Math.round(x / 500) - x + 250 * Math.sign(x))]) {
+          let pos = position + offset
+          // 图片索引，保证为正数，如：-1 % 4= -1，（-1 + 4）% 4 = 3
+          pos = (pos + children.length) % children.length 
+          children[pos].style.transition = ''
+          // - pos * 500 + offset * 500 + x % 500 ：自己的位置长度 + 偏移位置长度
+          children[pos].style.transform = `translateX(${ - pos * 500 + offset * 500 }px)`
+        }
+        document.removeEventListener('mousemove', move)
+        document.removeEventListener('mouseup', up)
+      }
+      document.addEventListener('mousemove',move)
+      document.addEventListener('mouseup', up)
+    })
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
