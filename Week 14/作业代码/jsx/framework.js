@@ -30,11 +30,13 @@ export class Component {
 }
 class TextWrapper extends Component{
   constructor (text) {
+    super()
     this.root = document.createTextNode(text)
   }
 }
 class ElementWrapper extends Component {
   constructor (type) {
+    super()
     this.root = document.createElement(type)
   }
 }
