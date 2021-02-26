@@ -1,2 +1,9 @@
 node_modules/
-.DS_Store
+*.DS_Store
+.gitignore
+.vscode/
+.nyc_output/
+launch.json
+dist/
+package-lock.json
+yarn.lock
