@@ -33,8 +33,10 @@ function kmp (source, pattern) {
         i++, j++
       } else {
         // 如果不相等则让j回到当前table[j]记录的索引
-        if (j > 0) 
+        if (j > 0) {
           j = table[j]
+          start = i - j
+        }
         else
           {
             i++
@@ -55,7 +57,10 @@ function kmp (source, pattern) {
     return false
   }
 }
-// console.log(kmp('aaabaaacx', 'aabaaac'))
-// console.log(kmp('Hellow', 'll'))
+console.log(kmp('aaabaaacx', 'aabaaac'))
+// console.log(kmp("mississippi",
+// "pi"))
+// console.log(kmp("mississippi",
+// "issip"))
 // console.log(kmp('abc', 'abc'))
-console.log(kmp('aaa', 'aa'))
+// console.log(kmp('aaa', 'aa'))

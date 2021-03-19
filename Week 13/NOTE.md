@@ -24,7 +24,7 @@ XML是从标准通用标记语言（SGML）中简化修改出来的。它主要�
 
 超文本标记语言（英语：HyperText Markup Language，简称：HTML）是一种用于创建网页的标准标记语言。HTML是一种基础技术，常与CSS、JavaScript一起被众多网站用于设计网页、网页应用程序以及移动应用程序的用户界面。
 
-HTML则使用的是SGML的子集的这样的一种定义方式。有符合SGML的DTD。后期W3C对它做了XML的尝试，所以也有XHTML的版本。后来XHTML2出现，但它严格的要求，使致它不被接受，最终流产。后来随着HTML5的出现，它重新定义了HTML和XML与SGML的关系，最终得到我们今天的HTML。
+HTML则使用的是SGML的子集的这样的一种定义方式。有符合SGML的DTD。后期W3C对它做了XML的尝试，所以也有XHTML的版本。后来XHTML2出现，但它严格的要求，使致它不被接受，最终流产。后来随着HTML5的出现，它重新定义了HTML和XML、SGML的关系，最终得到我们今天的HTML。
 
 所以我们先要了解一些HTML的一些较为古典的定义方式:
 
@@ -114,36 +114,33 @@ HTML 中三个常用的 namespace,HTML、SVG、MathML，常用的namespace都会
 
 ##### 节点操作
 
-- 导航类操作
-
-	- 节点的导航：在DOM树上严格来说所有的节点都叫Node（包含文本节点、空格、tab、回车），所以DOM树上一类通用的导航操作如下所示：
-
-		- parentNode：父节点
+- **导航类操作**
+- 节点的导航，在DOM树上严格来说所有的节点都叫Node（包含文本节点、空格、tab、回车），所以DOM树上一类通用的导航操作如下所示：
+	
+	- parentNode：父节点
 		- childNodes：所有子节点
 		- firstChild：第一个子节点
 		- lastChild：最后一个子节点
 		- nextSibling：下一个邻居，一般为空白
 		- previousSibling：上一个邻居，一般为空白
-
-	- 元素的导航，过滤掉文本节点，只找元素的一类导航类的操作：
-
-		- parentElement：父元素，与parentNode一致
+	
+- 元素的导航，过滤掉文本节点，只找元素的一类导航类的操作：
+	
+	- parentElement：父元素，与parentNode一致
 		- children：子元素
 		- firstElementChild：第一个子元素
 		- lastElementChild：最后一个子元素
 		- nextElementSibling：下一个子元素
 		-  previousElementSibling：上一个子元素
-
-- 修改操作
-
-	-  appendChild
+	
+- **修改操作**
+-  appendChild
 	- insertBefore
 	- removeChild
 	- replaceChild
-
-- 高级操作
-
-	- compareDocumentPosition 是一个用于比较两个节点中关系的函数。
+	
+- **高级操作**
+- compareDocumentPosition 是一个用于比较两个节点中关系的函数。
 	- contains 检查一个节点是否包含另一个节点的函数
 	- isEqualNode 检查两个节点是否完全相同。
 	- isSameNode 检查两个节点是否是同一个节点，实际上在JavaScript 中可以用“===”。
@@ -165,43 +162,48 @@ target.addEventListener(type, listener, useCapture);
 target.addEventListener(type, listener, useCapture, wantsUntrusted  ); 
 ```
 
-- Event:冒泡与捕获
-- 捕获
-	
-  - 鼠标在某个元素上触发了某个事件，浏览器会通过一个从外到内的计算过程去找到事件到底是作用在哪个元素身上，这个过程称为捕获。
-	  - useCapture：为true视为捕获触发。
+**Event:冒泡与捕获**
 
-	- 冒泡
+* 捕获
+  * 鼠标在某个元素上触发了某个事件，浏览器会通过一个从外到内的计算过程去找到事件到底是作用在哪个元素身上，这个过程称为捕获。
+  * useCapture：为true视为捕获触发。
 
-		- 则是我们已经算出来事件作用在哪个元素身上，而接着由内到外层层地向外触发，让元素去响。应这个事件的过程，就是冒泡。
-	- 不添加第三个参数默认为冒泡行为。
+- 冒泡
+
+  - 则是我们已经算出来事件作用在哪个元素身上，而接着由内到外层层地向外触发，让元素去响。应这个事件的过程，就是冒泡。
+- 不添加第三个参数默认为冒泡行为。
 
 ![](./img/事件流.jpg)
 
 ### Range API
 
-DOM API提供的节点方面的API可以让我们操作很多节点，而当我们需要操作半个节点、或者批量操作节点的时候，我们就需要用到 Range API了。相对了节点类的API，Range API在功能上会更加的强大且细致，但在使用和理解上也并没简单。
+DOM API提供的节点方面的API可以让我们操作很多节点，而当我们需要操作半个节点、或者批量操作节点的时候，我们就需要用到 Range API了。相对了节点类的API，Range API在功能上会更加的强大且细致，但在使用和理解上却也并不简单。
 
-##### [Range](https://developer.mozilla.org/zh-CN/docs/Web/API/Range) 
+#### [Range](https://developer.mozilla.org/zh-CN/docs/Web/API/Range) 
 
 [Range](https://developer.mozilla.org/zh-CN/docs/Web/API/Range) 接口表示一个包含节点与文本节点的一部分的文档片段。Range API 是对DOM树操作的一个万能的API。
 
-- Range的意思同其英文语义上的意思一致，表示一定的范围。它代表的是一个HTML文档流中有起点和终点的一段范围。range是连续的范围，一个Range中间是不能跳跃和间断的。
-- range有一个起点和终点，在DOM树中，只要起点的位置先于终点的位置就可以了，无关DOM树中的节点层级关系。
+- Range的意思同其英文语义上的意思一致，表示一定的范围。它代表的是一个HTML文档流中有起点和终点的一段范围。Range是连续的范围，一个Range中间是不能跳跃和间断的。
+- Range有一个起点和终点，在DOM树中，只要起点的位置先于终点的位置就可以了，无关DOM树中的节点层级关系。
 - 起点都是由一个element和一个偏移值决定的。对于element节点来说偏移值就是children，对于文字节点来说偏移值就是文字的个数。
-- range它不一定是一个完整意义上的节点，它可以包含半个节点。
-- 创建Range
+- Range它不一定是一个完整意义上的节点，它可以包含半个节点。
+
+#### Range的使用
+
+- **创建Range**
 
   -  var range = new Range()
   -  range.setStart(element, 9) 
   - range.setEnd(element, 4)
 
-- 而另一种获得Range的方法就是从Selection来创建Range
+- **从Selection来创建Range**
 
   -  var range = document.getSelection().getRangeAt(0);
   - Selection代表鼠标选中的屏幕区域范围
 
-- 因为书写HTML中会带有空格、换行和缩进这类的节点，会导致对于Range创建的偏移范围设置不精确，于是使用下面的range操作的API会使得操作更便捷：
+- **Range API的便捷操作**
+
+  因为书写HTML中会带有空格、换行和缩进这类的节点，会导致对于Range创建的偏移范围设置不精确，于是使用下面的range操作的API会使得操作更便捷。
 
   -  range.setStartBefore
   -  range.setEndBefore
@@ -210,31 +212,32 @@ DOM API提供的节点方面的API可以让我们操作很多节点，而当我�
   -  range.selectNode
   -  range.selectNodeContents
 
-- 创建range以后能做什么
+- **创建range以后能做什么**
 
-  - var fragment = range.extractContents()
+  - 取出range中的内容
 
-    - 取出range中的内容
-    - 这个方法获得的是一个fragment对象，为node的子类，fragment可以去容纳一些元素。fragment对象在执行被append操作的时候，自己并不会被append在DOM树中，而是将其包含的所有子元素append的上去。
+    > var fragment = range.extractContents()
+
+    - 这个方法获得的是一个**fragment**对象，为node的子类，**fragment**可以去容纳一些元素。**fragment**对象在执行被append操作的时候，自己并不会被append在DOM树中，而是将其包含的所有子元素append的上去。
     - 在React和Vue3.0中加入了fragment对象，底层也是用fragment对象实现的。
 
-  -  range.insertNode(document.createTextNode("aaaa"))
+  - 在range中插入新的内容
 
-    - 在range中插入新的内容
+    > range.insertNode(document.createTextNode("aaaa"))
 
-##### 实例
+#### 实例
 
 为了充分的理解Range API 以及了解它的使用功能，以及相对于传统方式操作DOM的优势,我们可以通过下面的一个问题了解:
 
 > 把一个元素所有的子元素逆序
 
-- 考点
+- **考点**
 
 	- 是否了解DOM的colletion是一个living colletion，即操作取出的chirldNodes，取出来的集合值会跟着操作而变化。
 	- 是否知道元素的子元素在inser的时候不需要将它从原来的位置挪掉的。
 	- 使用Range API进行高效的DOM操作
 
-- 代码实现
+- **代码实现**
 
 	- 基本代码。问题：4次插入，效率低下、代码冗余、时间复杂度为是O(n)
 	
@@ -265,7 +268,7 @@ DOM API提供的节点方面的API可以让我们操作很多节点，而当我�
 	
 	
 	
-	- 升级代码。问题至少三次插入，产生重拍，性能影响很大。
+	- 升级代码。问题至少三次插入，产生重排，性能影响很大。
 	
 	```html
 	<body>

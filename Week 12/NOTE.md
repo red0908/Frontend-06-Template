@@ -167,7 +167,7 @@ CSS的排版可以分成三代，第一代为基于正常流排版；第二代�
 
 ![效果1](./img/BFC效果2.jpg)
 
-如果我们将overflow:visible变为visible效果则如下：
+如果我们将overflow:hidden变为visible效果则如下：
 
 ![BFC效果](./img/BFC效果1.jpg)
 
@@ -186,7 +186,7 @@ CSS的排版可以分成三代，第一代为基于正常流排版；第二代�
 
 ![BFC](./img/BFC效果4.jpg)
 
-如果我们将overflow:visible变为visible，则会发生三个边距折叠在一起的效果，如下：
+如果我们将overflow:hidden变为visible，则会发生三个边距折叠在一起的效果，如下：
 
 ![BFC](./img/BFC效果3.jpg)
 
@@ -215,7 +215,7 @@ flex排版更接近人的自然思维。在flex排版中有的时候要纵排，
 ### 前言：Css所谓控制表现在于
 
 - 控制元素的位置
-- 控制元素的绘制以及最后显示的渲染显示的效果
+- 控制元素的绘制以及最后显示的渲染效果
 - 控制元素的动画以及交互
 
 ### 动画
@@ -371,4 +371,10 @@ HSV即色相、饱和度、明度。
    - background-image
 
 * 小技巧用inline SVG去描绘一些图片
+
+
+
+
+
+
 
